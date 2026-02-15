@@ -2,17 +2,17 @@ import errors.CommentNotFoundException
 import errors.NoteNotFoundException
 
 object NoteService {
-    private var notes: Array<Note> = emptyArray()
-    private var deletedComments: Array<Comment> = emptyArray()
+    private var notes = mutableListOf<Note>()
+    private var deletedComments = mutableListOf<Comment>()
 
     fun add(text: String): Note {
-        notes += Note(id = generateId(), text, comments = emptyArray())
+        notes += Note(id = generateId(), text, comments = emptyList())
         return notes.last()
     }
 
     fun createComment(noteId: Int, text: String): Comment {
         val note = getById(noteId)
-        var newComments = note.comments.copyOf()
+        val newComments = note.comments.toMutableList()
         val newComment = Comment(id = generateId(), noteId, text, date = System.currentTimeMillis())
 
         newComments += newComment
@@ -20,7 +20,7 @@ object NoteService {
         return newComment
     }
 
-    fun get(): Array<Note> {
+    fun get(): List<Note> {
         return notes
     }
 
@@ -33,13 +33,13 @@ object NoteService {
         throw NoteNotFoundException(noteId)
     }
 
-    fun getComments(noteId: Int): Array<Comment> {
+    fun getComments(noteId: Int): List<Comment> {
         return getById(noteId).comments
     }
 
     fun edit(newNote: Note): Note {
         var editedNote: Note? = null
-        var newNotes: Array<Note> = emptyArray()
+        val newNotes = mutableListOf<Note>()
 
         for (note in notes) {
             if (note.id == newNote.id) {
@@ -61,7 +61,7 @@ object NoteService {
     fun editComment(newComment: Comment): Comment {
         val note = getById(newComment.noteId)
         var editedComment: Comment? = null
-        var newComments: Array<Comment> = emptyArray()
+        val newComments = mutableListOf<Comment>()
 
         for (comment in note.comments) {
             if (comment.id == newComment.id) {
@@ -82,7 +82,7 @@ object NoteService {
 
     fun delete(noteId: Int): Note {
         var deletedNote: Note? = null
-        var newNotes: Array<Note> = emptyArray()
+        val newNotes = mutableListOf<Note>()
 
         for (note in notes) {
             if (note.id == noteId) {
@@ -103,7 +103,7 @@ object NoteService {
     fun deleteComment(noteId: Int, commentId: Int): Comment {
         val note = getById(noteId)
         var deletedComment: Comment? = null
-        var newComments: Array<Comment> = emptyArray()
+        val newComments = mutableListOf<Comment>()
 
         for (comment in note.comments) {
             if (comment.id == commentId) {
@@ -124,12 +124,12 @@ object NoteService {
 
     fun restoreComment(noteId: Int, commentId: Int): Comment {
         var restoredComment: Comment? = null
-        var newDeletedComments: Array<Comment> = emptyArray()
+        val newDeletedComments = mutableListOf<Comment>()
 
         for (comment in deletedComments) {
             if (comment.id == commentId) {
                 val note = getById(noteId)
-                var newComments = note.comments.copyOf()
+                val newComments = note.comments.toMutableList()
 
                 newComments += comment
                 edit(note.copy(comments = newComments))
@@ -148,8 +148,8 @@ object NoteService {
     }
 
     fun clear() {
-        notes = emptyArray()
-        deletedComments = emptyArray()
+        notes = mutableListOf()
+        deletedComments = mutableListOf()
     }
 
     private fun generateId(): Int {

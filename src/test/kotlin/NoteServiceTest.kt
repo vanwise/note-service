@@ -35,7 +35,7 @@ class NoteServiceTest {
     @Test
     fun editShouldThrowNotFoundException() {
         assertThrows(NoteNotFoundException::class.java) {
-            NoteService.edit(Note(id = 1, text = "Note", comments = emptyArray()))
+            NoteService.edit(Note(id = 1, text = "Note", comments = emptyList()))
         }
     }
 
@@ -59,7 +59,7 @@ class NoteServiceTest {
     fun deleteShouldCorrectDeleteNote() {
         val note = NoteService.add("Note")
         assertEquals(NoteService.delete(note.id), note)
-        assertArrayEquals(NoteService.get(), emptyArray<Note>())
+        assertEquals(NoteService.get(), emptyList<Note>())
     }
 
     @Test
